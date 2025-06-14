@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MobileIDE Files</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      background: #1e1e1e;
+      color: #ddd;
+      font-family: sans-serif;
+      padding: 10px;
+    }
+    h1 {
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+    #fileList {
+      list-style: none;
+      padding: 0;
+    }
+    #fileList li {
+      padding: 10px;
+      background: #252526;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #fileList li:hover {
+      background: #333;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    input {
+      width: calc(100% - 22px);
+      background: #2d2d2d;
+      color: #eee;
+    }
+    button {
+      background: #3f3f3f;
+      color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📁 Files</h1>
+
+  <input type="text" id="fileName" placeholder="New file name..." />
+  <button onclick="createFile()">➕ Create File</button>
+
+  <ul id="fileList"></ul>
+
+  <script>
+    function loadFiles() {
+      const fileList = document.getElementById('fileList');
+      fileList.innerHTML = '';
+
+      const files = JSON.parse(localStorage.getItem('mobileIDE_files')) || [];
+      files.forEach(file => {
+        const li = document.createElement('li');
+        li.textContent = file.name;
+        li.onclick = () => openFile(file.name);
+        fileList.appendChild(li);
+      });
+    }
+
+    function createFile() {
+      const name = document.getElementById('fileName').value.trim();
+      if (!name) return alert('Enter a file name!');
+      const files = JSON.parse(localStorage.getItem('mobileIDE_files')) || [];
+      if (files.some(f => f.name === name)) return alert('File already exists!');
+      files.push({ name, content: '' });
+      localStorage.setItem('mobileIDE_files', JSON.stringify(files));
+      document.getElementById('fileName').value = '';
+      loadFiles();
+    }
+
+    function openFile(name) {
+      localStorage.setItem('mobileIDE_currentFile', name);
+      window.location.href = 'index.html';
+    }
+
+    loadFiles();
+  </script>
+
+</body>
+</html>
